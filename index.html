@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StuTube — Safe Learning. Smart Watching.</title>
+<style>
+:root{
+ --primary:#4f46e5;--primary2:#6366f1;--navy:#172554;
+ --bg:#f6f7ff;--card:#ffffff;--text:#18213b;--muted:#717b96;
+ --border:#e5e7f3;--soft:#eef2ff;--green:#10b981;--red:#ef4444;
+ --shadow:0 10px 35px #29336b0c
+}
+body.dark{
+ --bg:#0c1224;--card:#151e35;--text:#f3f5ff;--muted:#a6b0cc;
+ --border:#293450;--soft:#222b4b;--navy:#dbe5ff;
+ --shadow:0 10px 35px #00000020
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif;transition:.2s}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid #818cf8;outline-offset:2px}
+.topbar{height:72px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:900;color:var(--primary);letter-spacing:-1px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#4f46e5,#818cf8);display:grid;place-items:center;color:white;font-size:20px;box-shadow:0 5px 14px #4f46e544}
+.brand small{display:block;font-size:9px;color:var(--muted);letter-spacing:.5px;font-weight:600;margin-top:2px}
+.top-actions{display:flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:11px;padding:11px 16px;font-weight:750;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.primary{background:var(--primary);color:#fff}
+.secondary{background:var(--soft);color:var(--primary)}
+.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.danger{background:#fee2e2;color:#b91c1c}
+.small{padding:7px 10px;font-size:12px;border-radius:8px}
+main{max-width:1150px;margin:auto;padding:28px 22px 60px}
+.hero{border-radius:28px;padding:48px 40px;background:linear-gradient(115deg,#1e1b4b,#4338ca 62%,#818cf8);color:white;position:relative;overflow:hidden}
+.hero:after{content:"▶";position:absolute;right:7%;top:8%;font-size:170px;color:#ffffff10;transform:rotate(-8deg)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#c7d2fe}
+.hero h1{font-size:clamp(32px,5vw,54px);line-height:1.12;max-width:630px;margin:17px 0}
+.hero p{color:#e0e7ff;max-width:560px;line-height:1.7}
+.hero .btn{margin-top:10px}
+.section-title{font-size:23px;margin:30px 0 14px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feature,.panel,.auth-card,.stat,.video-card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.feature{padding:22px}
+.feature-icon{width:46px;height:46px;background:var(--soft);border-radius:14px;display:grid;place-items:center;font-size:23px}
+.feature h3{margin:14px 0 8px}
+.feature p{color:var(--muted);font-size:14px;line-height:1.6;margin:0}
+.auth-wrap{max-width:480px;margin:28px auto}
+.auth-card{padding:28px}
+.auth-card h2{margin:0 0 8px}
+.muted{color:var(--muted)}
+.form-row{margin:16px 0}
+label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}
+input,select{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg);color:var(--text);min-width:0}
+input::placeholder{color:var(--muted)}
+.full{width:100%}
+.link{color:var(--primary);font-weight:750;background:none;border:0;padding:4px}
+.note{padding:12px;border-radius:10px;background:var(--soft);font-size:12px;line-height:1.6;color:var(--muted)}
+.message{margin:12px 0;padding:12px;border-radius:10px;font-size:13px;line-height:1.5}
+.message.error{background:#fee2e2;color:#991b1b}
+.message.success{background:#d1fae5;color:#065f46}
+.hidden{display:none!important}
+.dashboard-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.dashboard-head h1{margin-bottom:5px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}
+.stat{padding:19px}
+.stat strong{font-size:27px;display:block;color:var(--primary);margin-top:8px}
+.panel{padding:22px;margin:18px 0}
+.panel h2{margin-top:0}
+.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.inline-form{display:flex;gap:8px}
+.inline-form input{flex:1}
+.list{display:grid;gap:10px}
+.list-item{border:1px solid var(--border);border-radius:12px;padding:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:#d1fae5;color:#065f46}
+.badge.off{background:#fee2e2;color:#991b1b}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.tab{border:1px solid var(--border);background:var(--card);color:var(--text);padding:10px 14px;border-radius:10px;font-weight:700}
+.tab.active{background:var(--primary);color:white;border-color:var(--primary)}
+.video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.video-card{overflow:hidden}
+.video-thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#312e81,#818cf8);display:grid;place-items:center;color:white;font-size:44px}
+.video-body{padding:15px}
+.video-body h3{font-size:15px;margin:0 0 8px;line-height:1.5}
+.video-body p{font-size:12px;color:var(--muted)}
+.empty{padding:35px 18px;text-align:center;background:var(--soft);border-radius:15px;color:var(--muted);line-height:1.7}
+footer{padding:24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+dialog{width:min(760px,94vw);border:1px solid var(--border);border-radius:18px;background:var(--card);color:var(--text);padding:0}
+dialog::backdrop{background:#070b1dcc}
+.modal-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-body{padding:20px}
+.player{width:100%;aspect-ratio:16/9;border:0;background:#000;border-radius:12px}
+@media(max-width:750px){
+ .topbar{padding:0 15px;height:64px}.brand{font-size:21px}.hero{padding:34px 24px}
+ .features,.video-grid{grid-template-columns:1fr}
+ .stats{grid-template-columns:1fr 1fr}.grid-two{grid-template-columns:1fr}
+ main{padding:20px 14px 40px}.hero:after{font-size:90px;right:0;top:0}
+ .hide-mobile{display:none}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">▶</div><div>StuTube<small>SAFE LEARNING. SMART WATCHING.</small></div></div>
+  <div class="top-actions">
+    <button class="btn ghost small" id="langBtn" onclick="toggleLang()">বাংলা</button>
+    <button class="btn ghost small" aria-label="Toggle dark mode" onclick="toggleTheme()">☾</button>
+    <button class="btn secondary small" id="navLogin" onclick="showAuth('parentLogin')">Sign in</button>
+  </div>
+</header>
+
+<main>
+<section id="landing">
+  <div class="hero">
+    <div class="eyebrow" data-i="eyebrow">A SAFER WAY TO LEARN</div>
+    <h1 data-i="heroTitle">Your learning.<br>Your safe space.</h1>
+    <p data-i="heroDesc">A parent-guided learning space where students watch educational videos from approved YouTube channels.</p>
+    <button class="btn" style="background:white;color:#4338ca" onclick="showAuth('parentSignup')" data-i="getStarted">Get started →</button>
+    <button class="btn" style="background:#ffffff20;color:white;border:1px solid #ffffff55" onclick="showAuth('studentLogin')" data-i="studentLogin">Student login</button>
+  </div>
+  <h2 class="section-title" data-i="whyTitle">Learning made safer</h2>
+  <div class="features">
+    <article class="feature"><div class="feature-icon">🛡️</div><h3 data-i="feature1">Parent-approved content</h3><p data-i="feature1d">Parents choose which YouTube channels students can access.</p></article>
+    <article class="feature"><div class="feature-icon">🎯</div><h3 data-i="feature2">Focused learning</h3><p data-i="feature2d">A learning-first interface without a general YouTube browsing feed.</p></article>
+    <article class="feature"><div class="feature-icon">🌐</div><h3 data-i="feature3">Made for everyone</h3><p data-i="feature3d">A simple interface with Bangla and English language options.</p></article>
+  </div>
+</section>
+
+<section id="authSection" class="hidden">
+ <div class="auth-wrap"><div class="auth-card">
+   <button class="link" onclick="goHome()">← <span data-i="back">Back</span></button>
+   <h2 id="authTitle">Parent sign up</h2>
+   <p id="authDesc" class="muted">Create your family’s learning space.</p>
+   <div id="authMessage" aria-live="polite"></div>
+   <form id="authForm">
+    <div class="form-row hidden" id="nameRow"><label for="parentName" data-i="fullName">Full name</label><input id="parentName" autocomplete="name" placeholder="Your name"></div>
+    <div class="form-row hidden" id="studentIdRow"><label for="studentId" data-i="studentId">Student ID</label><input id="studentId" autocomplete="username" placeholder="e.g. STUDENT-001"></div>
+    <div class="form-row" id="emailRow"><label for="email" data-i="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+    <div class="form-row"><label for="password" data-i="password">Password</label><input id="password" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters"></div>
+    <button class="btn primary full" id="authSubmit" type="submit">Create parent account</button>
+   </form>
+   <p id="authSwitch" class="muted" style="text-align:center;margin-top:20px"></p>
+   <div class="note" style="margin-top:15px" data-i="authNote">Your account will be connected to Supabase after configuration. Never share your password.</div>
+ </div></div>
+</section>
+
+<section id="dashboard" class="hidden">
+ <div class="dashboard-head">
+  <div><div class="eyebrow" style="color:var(--primary)" id="roleLabel">PARENT SPACE</div><h1 id="welcomeTitle">Welcome!</h1><div class="muted" id="welcomeDesc">Manage your learning space.</div></div>
+  <button class="btn ghost" onclick="logout()" data-i="logout">Log out</button>
+ </div>
+ <div class="stats">
+  <div class="stat"><span class="muted" data-i="approvedChannels">Approved channels</span><strong id="channelCount">0</strong></div>
+  <div class="stat"><span class="muted" data-i="students">Students</span><strong id="studentCount">0</strong></div>
+  <div class="stat"><span class="muted" data-i="savedVideos">Saved videos</span><strong id="savedCount">0</strong></div>
+ </div>
+ <div class="tabs" id="tabs"></div>
+ <div id="dashboardContent"></div>
+</section>
+</main>
+
+<footer>StuTube © 2026 · <span data-i="tagline">Safe Learning. Smart Watching.</span><br><span data-i="footerNote">A parent-guided learning platform.</span></footer>
+
+<dialog id="playerDialog">
+ <div class="modal-head"><strong id="playerTitle">Video</strong><button class="btn ghost small" onclick="closePlayer()">✕</button></div>
+ <div class="modal-body"><div id="playerArea"></div><p class="muted" id="playerCaption"></p></div>
+</dialog>
+
+<script>
+/*
+ CONFIGURATION:
+ Replace these two placeholder values with your Supabase Project URL
+ and Publishable/anon key. These are public frontend values; NEVER use
+ a service_role or secret key here.
+*/
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE";
+const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+
+/*
+ This initial version includes a local preview so you can inspect the UI.
+ It does NOT claim to provide secure real authentication or database access.
+ Do not store real passwords in localStorage.
+*/
+const I18N = {
+ en:{
+  eyebrow:"A SAFER WAY TO LEARN",heroTitle:"Your learning.<br>Your safe space.",
+  heroDesc:"A parent-guided learning space where students watch educational videos from approved YouTube channels.",
+  getStarted:"Get started →",studentLogin:"Student login",whyTitle:"Learning made safer",
+  feature1:"Parent-approved content",feature1d:"Parents choose which YouTube channels students can access.",
+  feature2:"Focused learning",feature2d:"A learning-first interface without a general YouTube browsing feed.",
+  feature3:"Made for everyone",feature3d:"A simple interface with Bangla and English language options.",
+  back:"Back",fullName:"Full name",studentId:"Student ID",email:"Email address",
+  password:"Password",authNote:"Real accounts require Supabase configuration. Never share your password.",
+  logout:"Log out",approvedChannels:"Approved channels",students:"Students",savedVideos:"Saved videos",
+  tagline:"Safe Learning. Smart Watching.",footerNote:"A parent-guided learning platform.",
+  parentSpace:"PARENT SPACE",studentSpace:"STUDENT SPACE",welcomeParent:"Welcome, Parent!",
+  welcomeStudent:"Welcome, Student!",manageSpace:"Manage your family’s learning space.",
+  learnSpace:"Enjoy your approved educational videos.",channels:"Channels",studentsTab:"Students",
+  settings:"Settings",watch:"Watch videos",saved:"Saved videos",recent:"Recently watched",
+  addChannel:"Add approved YouTube channel",channelUrl:"YouTube channel URL or channel ID",
+  add:"Add channel",noChannels:"No approved channels yet",noChannelsDesc:"Add a YouTube channel to begin. Students will only see channels approved by you.",
+  noStudents:"No students yet",createStudent:"Create a student account",studentName:"Student name",
+  create:"Create student",studentList:"Your students",studentIdLabel:"Student ID",
+  channelList:"Approved channels",remove:"Remove",enabled:"Enabled",disabled:"Disabled",
+  preview:"Preview dashboard",previewWarning:"Preview mode only: accounts and changes are saved in this browser, not securely in Supabase.",
+  setupTitle:"Supabase configuration needed",setupDesc:"Your Supabase URL and Publishable Key have not been configured in this file.",
+  setupHelp:"Open this HTML file and replace both PASTE_YOUR... values near the top of the script. Do not use a secret or service_role key.",
+  noVideos:"No videos to show yet",videoSearch:"Search approved channels",search:"Search",
+  searchHelp:"Real YouTube search needs the YouTube Data API and a secure server-side API proxy.",
+  studentCreated:"Student profile created for this browser preview.",studentPreview:"This preview does not create a real Supabase student login.",
+  parentSignup:"Parent sign up",parentLogin:"Parent sign in",studentLoginTitle:"Student sign in",
+  signupDesc:"Create your family’s learning space.",loginDesc:"Sign in to continue.",
+  createParent:"Create parent account",signIn:"Sign in",switchLogin:"Already have an account?",switchSignup:"Need an account?",
+  demoLabel:"Preview dashboard (not a real login)",invalid:"Please complete all required fields.",
+  authError:"Supabase is not configured. You can preview the interface, but real sign-in will not work yet.",
+  channelAdded:"Channel added to this browser preview.",confirmRemove:"Remove this channel?",
+  nameRequired:"Please enter a student name.",urlRequired:"Enter a YouTube channel URL or channel ID.",
+  parentOnly:"Only the parent dashboard can manage channels and students.",
+  emptySearch:"Enter a search term to search your approved channel list.",
+  play:"Open YouTube video",save:"Save",unsave:"Unsave",savedEmpty:"No saved videos yet.",
+  recentEmpty:"No recently watched videos yet.",parentAccess:"Parent dashboard",studentAccess:"Student dashboard",
+  setupBadge:"DEMO / SETUP REQUIRED",channelPlaceholder:"https://www.youtube.com/@channelname",
+  studentNamePlaceholder:"Student's name",searchPlaceholder:"Search approved channels…",
+  noRealVideos:"Video search will be enabled after the YouTube API backend is configured.",
+  signOutConfirm:"Log out of this preview?"
+ },
+ bn:{
+  eyebrow:"নিরাপদে শেখার নতুন উপায়",heroTitle:"তোমার শিক্ষা।<br>তোমার নিরাপদ জগৎ।",
+  heroDesc:"অভিভাবকের অনুমোদিত YouTube চ্যানেল থেকে শিক্ষার্থীদের শিক্ষামূলক ভিডিও দেখার জায়গা।",
+  getStarted:"শুরু করো →",studentLogin:"শিক্ষার্থী লগইন",whyTitle:"আরও নিরাপদ শিক্ষা",
+  feature1:"অভিভাবক অনুমোদিত কনটেন্ট",feature1d:"শিক্ষার্থী কোন YouTube চ্যানেল দেখবে, অভিভাবক তা ঠিক করবেন।",
+  feature2:"শেখায় মনোযোগ",feature2d:"সাধারণ YouTube ফিডের পরিবর্তে শিক্ষাকেন্দ্রিক ইন্টারফেস।",
+  feature3:"সবার জন্য",feature3d:"বাংলা ও ইংরেজি ভাষায় সহজ ইন্টারফেস।",
+  back:"ফিরে যাও",fullName:"পুরো নাম",studentId:"শিক্ষার্থী আইডি",email:"ইমেইল ঠিকানা",
+  password:"পাসওয়ার্ড",authNote:"বাস্তব অ্যাকাউন্টের জন্য Supabase সংযোগ প্রয়োজন। পাসওয়ার্ড শেয়ার করবে না।",
+  logout:"লগ আউট",approvedChannels:"অনুমোদিত চ্যানেল",students:"শিক্ষার্থী",savedVideos:"সংরক্ষিত ভিডিও",
+  tagline:"নিরাপদ শিক্ষা। স্মার্ট ওয়াচিং।",footerNote:"অভিভাবক-নিয়ন্ত্রিত শিক্ষার প্ল্যাটফর্ম।",
+  parentSpace:"অভিভাবক স্পেস",studentSpace:"শিক্ষার্থী স্পেস",welcomeParent:"স্বাগতম, অভিভাবক!",
+  welcomeStudent:"স্বাগতম, শিক্ষার্থী!",manageSpace:"তোমার পরিবারের শিক্ষার জায়গা পরিচালনা করো।",
+  learnSpace:"অনুমোদিত শিক্ষামূলক ভিডিও উপভোগ করো।",channels:"চ্যানেল",studentsTab:"শিক্ষার্থী",
+  settings:"সেটিংস",watch:"ভিডিও দেখো",saved:"সংরক্ষিত ভিডিও",recent:"সম্প্রতি দেখা",
+  addChannel:"অনুমোদিত YouTube চ্যানেল যোগ করো",channelUrl:"YouTube চ্যানেলের লিংক বা Channel ID",
+  add:"চ্যানেল যোগ",noChannels:"এখনো কোনো অনুমোদিত চ্যানেল নেই",
+  noChannelsDesc:"প্রথমে একটি YouTube চ্যানেল যোগ করো। শিক্ষার্থীরা শুধু তোমার অনুমোদিত চ্যানেল দেখবে।",
+  noStudents:"এখনো কোনো শিক্ষার্থী নেই",createStudent:"শিক্ষার্থীর অ্যাকাউন্ট তৈরি",
+  studentName:"শিক্ষার্থীর নাম",create:"শিক্ষার্থী তৈরি",studentList:"তোমার শিক্ষার্থীরা",
+  studentIdLabel:"শিক্ষার্থী আইডি",channelList:"অনুমোদিত চ্যানেল",remove:"বাদ দাও",
+  enabled:"চালু",disabled:"বন্ধ",preview:"ড্যাশবোর্ডের নমুনা দেখো",
+  previewWarning:"শুধু প্রিভিউ: তথ্য এই ব্রাউজারে সংরক্ষিত হয়, নিরাপদ Supabase ডেটাবেসে নয়।",
+  setupTitle:"Supabase কনফিগারেশন প্রয়োজন",
+  setupDesc:"এই ফাইলে Supabase URL ও Publishable Key এখনো বসানো হয়নি।",
+  setupHelp:"HTML ফাইলের স্ক্রিপ্টের শুরুতে PASTE_YOUR... লেখা দুটি মান বদলাও। Secret বা service_role key ব্যবহার করবে না।",
+  noVideos:"এখনো কোনো ভিডিও নেই",videoSearch:"অনুমোদিত চ্যানেলে খোঁজো",search:"সার্চ",
+  searchHelp:"বাস্তব YouTube সার্চের জন্য API ও নিরাপদ সার্ভার-সাইড ব্যবস্থা প্রয়োজন।",
+  studentCreated:"এই ব্রাউজারের প্রিভিউয়ের জন্য শিক্ষার্থী প্রোফাইল তৈরি হয়েছে।",
+  studentPreview:"এই প্রিভিউ বাস্তব Supabase শিক্ষার্থী লগইন তৈরি করে না।",
+  parentSignup:"অভিভাবক সাইন আপ",parentLogin:"অভিভাবক লগইন",
+  studentLoginTitle:"শিক্ষার্থী লগইন",signupDesc:"পরিবারের শিক্ষার জায়গা তৈরি করো।",
+  loginDesc:"চালিয়ে যেতে লগইন করো।",createParent:"অভিভাবক অ্যাকাউন্ট তৈরি",signIn:"লগইন",
+  switchLogin:"আগে অ্যাকাউন্ট আছে?",switchSignup:"অ্যাকাউন্ট প্রয়োজন?",
+  demoLabel:"ড্যাশবোর্ড প্রিভিউ (বাস্তব লগইন নয়)",invalid:"প্রয়োজনীয় সব তথ্য পূরণ করো।",
+  authError:"Supabase সংযুক্ত নয়। ইন্টারফেস দেখা যাবে, কিন্তু বাস্তব লগইন এখনো কাজ করবে না।",
+  channelAdded:"এই ব্রাউজারের প্রিভিউতে চ্যানেল যোগ হয়েছে।",confirmRemove:"এই চ্যানেলটি বাদ দেবে?",
+  nameRequired:"শিক্ষার্থীর নাম লিখো।",urlRequired:"YouTube চ্যানেলের লিংক বা ID দাও।",
+  parentOnly:"শুধু অভিভাবক চ্যানেল ও শিক্ষার্থী পরিচালনা করতে পারবেন.",
+  emptySearch:"অনুমোদিত চ্যানেলের তালিকায় খুঁজতে একটি শব্দ লিখো।",
+  play:"YouTube ভিডিও খোলো",save:"সংরক্ষণ",unsave:"সংরক্ষণ বাতিল",
+  savedEmpty:"এখনো কোনো ভিডিও সংরক্ষণ করা হয়নি।",
+  recentEmpty:"সম্প্রতি দেখা ভিডিও নেই।",parentAccess:"অভিভাবক ড্যাশবোর্ড",
+  studentAccess:"শিক্ষার্থী ড্যাশবোর্ড",setupBadge:"প্রিভিউ / সেটআপ প্রয়োজন",
+  channelPlaceholder:"https://www.youtube.com/@channelname",
+  studentNamePlaceholder:"শিক্ষার্থীর নাম",searchPlaceholder:"অনুমোদিত চ্যানেলে খোঁজো…",
+  noRealVideos:"YouTube API ব্যাকএন্ড সেটআপ হলে ভিডিও সার্চ চালু হবে।",
+  signOutConfirm:"প্রিভিউ থেকে লগ আউট করবে?"
+ }
+};
+let lang="en",authMode="parentSignup",currentRole=null,currentUser=null,activeTab="channels";
+let state={channels:[],students:[],saved:[],recent:[]};
+const $=id=>document.getElementById(id);
+const t=k=>I18N[lang][k]||I18N.en[k]||k;
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function loadState(){
+ try{state=Object.assign(state,JSON.parse(localStorage.getItem("stutube_preview_state")||"{}"))}catch(e){}
+}
+function saveState(){try{localStorage.setItem("stutube_preview_state",JSON.stringify(state))}catch(e){}}
+function toggleLang(){lang=lang==="en"?"bn":"en";document.documentElement.lang=lang;applyLang();if(!$("dashboard").classList.contains("hidden"))renderDashboard();if(!$("authSection").classList.contains("hidden"))renderAuth()}
+function applyLang(){
+ document.querySelectorAll("[data-i]").forEach(el=>{const v=t(el.dataset.i);if(v.includes("<br>"))el.innerHTML=v;else el.textContent=v});
+ $("langBtn").textContent=lang==="en"?"বাংলা":"English";
+ $("navLogin").textContent=t("signIn");
+}
+function toggleTheme(){document.body.classList.toggle("dark");localStorage.setItem("stutube_dark",document.body.classList.contains("dark")?"1":"0")}
+function goHome(){currentRole=null;currentUser=null;$("landing").classList.remove("hidden");$("authSection").classList.add("hidden");$("dashboard").classList.add("hidden");$("navLogin").classList.remove("hidden")}
+function showAuth(mode){
+ authMode=mode;$("landing").classList.add("hidden");$("dashboard").classList.add("hidden");$("authSection").classList.remove("hidden");$("navLogin").classList.add("hidden");renderAuth();
+}
+function renderAuth(){
+ const signup=authMode==="parentSignup",student=authMode==="studentLogin";
+ $("authTitle").textContent=t(signup?"parentSignup":student?"studentLoginTitle":"parentLogin");
+ $("authDesc").textContent=t(signup?"signupDesc":"loginDesc");
+ $("nameRow").classList.toggle("hidden",!signup);
+ $("studentIdRow").classList.toggle("hidden",!student);
+ $("emailRow").classList.toggle("hidden",student);
+ $("email").required=!student;$("studentId").required=student;$("parentName").required=signup;
+ $("password").autocomplete=signup?"new-password":"current-password";
+ $("authSubmit").textContent=t(signup?"createParent":"signIn");
+ $("authSwitch").innerHTML=signup
+ ?esc(t("switchLogin"))+' <button class="link" onclick="showAuth(\\'parentLogin\\')">'+esc(t("signIn"))+'</button>'
+ :student
+ ?esc(t("parentAccess"))+' <button class="link" onclick="showAuth(\\'parentLogin\\')">'+esc(t("parentLogin"))+'</button>'
+ :esc(t("switchSignup"))+' <button class="link" onclick="showAuth(\\'parentSignup\\')">'+esc(t("parentSignup"))+'</button>';
+ $("authMessage").innerHTML="";
+}
+$("authForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+ $("authMessage").innerHTML='<div class="message error">'+esc(t("authError"))+'</div>';
+});
+function previewDashboard(role){
+ currentRole=role;currentUser=role==="parent"?"Preview Parent":"Preview Student";activeTab=role==="parent"?"channels":"watch";
+ $("landing").classList.add("hidden");$("authSection").classList.add("hidden");$("dashboard").classList.remove("hidden");$("navLogin").classList.add("hidden");renderDashboard();
+}
+function logout(){
+ if(!confirm(t("signOutConfirm")))return;
+ currentRole=null;currentUser=null;goHome();
+}
+function renderDashboard(){
+ $("roleLabel").textContent=t(currentRole==="parent"?"parentSpace":"studentSpace");
+ $("welcomeTitle").textContent=t(currentRole==="parent"?"welcomeParent":"welcomeStudent");
+ $("welcomeDesc").textContent=t(currentRole==="parent"?"manageSpace":"learnSpace");
+ $("channelCount").textContent=state.channels.filter(c=>c.enabled).length;
+ $("studentCount").textContent=state.students.length;$("savedCount").textContent=state.saved.length;
+ const tabs=currentRole==="parent"
+  ?[["channels","channels"],["students","studentsTab"],["settings","settings"]]
+  :[["watch","watch"],["saved","saved"],["recent","recent"]];
+ $("tabs").innerHTML=tabs.map(([id,key])=>`<button class="tab ${activeTab===id?"active":""}" onclick="activeTab='${id}';renderDashboard()">${esc(t(key))}</button>`).join("");
+ if(currentRole==="parent"&&activeTab==="channels")renderChannels();
+ else if(currentRole==="parent"&&activeTab==="students")renderStudents();
+ else if(currentRole==="parent")renderSettings();
+ else if(activeTab==="watch")renderWatch();
+ else if(activeTab==="saved")renderSaved();
+ else renderRecent();
+}
+function renderChannels(){
+ const list=state.channels.length?`<div class="list">${state.channels.map(c=>`<div class="list-item"><div style="min-width:0"><strong>${esc(c.name)}</strong><div class="muted" style="font-size:12px;overflow-wrap:anywhere">${esc(c.url)}</div><span class="badge ${c.enabled?"":"off"}">${esc(t(c.enabled?"enabled":"disabled"))}</span></div><div style="display:flex;gap:6px"><button class="btn secondary small" onclick="toggleChannel('${c.id}')">${c.enabled?"Disable":"Enable"}</button><button class="btn danger small" onclick="removeChannel('${c.id}')">${esc(t("remove"))}</button></div></div>`).join("")}</div>`:`<div class="empty"><div style="font-size:36px">📺</div><h3>${esc(t("noChannels"))}</h3><p>${esc(t("noChannelsDesc"))}</p></div>`;
+ $("dashboardContent").innerHTML=`<div class="panel"><h2>${esc(t("addChannel"))}</h2><form class="inline-form" id="channelForm"><input id="channelUrl" type="text" placeholder="${esc(t("channelPlaceholder"))}" required><button class="btn primary">${esc(t("add"))}</button></form><p class="muted" style="font-size:12px">${esc(t("previewWarning"))}</p></div><div class="panel"><h2>${esc(t("channelList"))}</h2>${list}</div>`;
+ $("channelForm").addEventListener("submit",e=>{
+  e.preventDefault();const url=$("channelUrl").value.trim();
+  if(!/(youtube\.com|youtu\.be)/i.test(url)&&!/^UC[\w-]{20,}$/.test(url)){alert(t("urlRequired"));return}
+  state.channels.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),url,name:url.split("/").filter(Boolean).pop()||url,enabled:true});
+  saveState();renderDashboard();
+ });
+}
+function toggleChannel(id){state.channels=state.channels.map(c=>c.id===id?{...c,enabled:!c.enabled}:c);saveState();renderDashboard()}
+function removeChannel(id){if(!confirm(t("confirmRemove")))return;state.channels=state.channels.filter(c=>c.id!==id);saveState();renderDashboard()}
+function renderStudents(){
+ const list=state.students.length?`<div class="list">${state.students.map(s=>`<div class="list-item"><div><strong>${esc(s.name)}</strong><div class="muted">${esc(t("studentIdLabel"))}: ${esc(s.id)}</div></div><button class="btn danger small" onclick="removeStudent('${s.id}')">${esc(t("remove"))}</button></div>`).join("")}</div>`:`<div class="empty"><h3>${esc(t("noStudents"))}</h3><p>${esc(t("studentPreview"))}</p></div>`;
+ $("dashboardContent").innerHTML=`<div class="grid-two"><div class="panel"><h2>${esc(t("createStudent"))}</h2><form id="studentForm"><div class="form-row"><label>${esc(t("studentName"))}</label><input id="newStudentName" placeholder="${esc(t("studentNamePlaceholder"))}" required></div><button class="btn primary full">${esc(t("create"))}</button></form><p class="muted" style="font-size:12px">${esc(t("studentPreview"))}</p></div><div class="panel"><h2>${esc(t("studentList"))}</h2>${list}</div></div>`;
+ $("studentForm").addEventListener("submit",e=>{
+  e.preventDefault();const name=$("newStudentName").value.trim();if(!name){alert(t("nameRequired"));return}
+  const id="STU-"+Math.random().toString(36).slice(2,8).toUpperCase();
+  state.students.push({name,id});saveState();alert(t("studentCreated"));renderDashboard();
+ });
+}
+function removeStudent(id){state.students=state.students.filter(s=>s.id!==id);saveState();renderDashboard()}
+function renderSettings(){
+ $("dashboardContent").innerHTML=`<div class="panel"><h2>${esc(t("settings"))}</h2><div class="note">${esc(t("setupTitle"))}<br>${esc(t("setupDesc"))}<br><br>${esc(t("setupHelp"))}</div><p class="muted">${esc(t("previewWarning"))}</p><p><strong>Project URL:</strong> ${SUPABASE_URL.startsWith("http")&&!SUPABASE_URL.includes("PASTE_")?"Configured":"Not configured"}</p><p><strong>Publishable key:</strong> ${SUPABASE_PUBLISHABLE_KEY.startsWith("sb_publishable_")||SUPABASE_PUBLISHABLE_KEY.length>40&&!SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")?"Value entered":"Not configured"}</p></div>`;
+}
+function renderWatch(){
+ const enabled=state.channels.filter(c=>c.enabled);
+ $("dashboardContent").innerHTML=`<div class="panel"><h2>${esc(t("videoSearch"))}</h2><form id="searchForm" class="inline-form"><input id="videoQuery" placeholder="${esc(t("searchPlaceholder"))}"><button class="btn primary">${esc(t("search"))}</button></form><p class="muted">${esc(t("searchHelp"))}</p></div>${enabled.length?`<div class="panel"><h2>${esc(t("channels"))}</h2><div class="list">${enabled.map(c=>`<div class="list-item"><div><strong>${esc(c.name)}</strong><div class="muted">${esc(c.url)}</div></div><button class="btn secondary small" onclick="window.open('${esc(c.url).replace(/'/g,"%27")}','_blank','noopener')">${esc(t("play"))}</button></div>`).join("")}</div></div>`:`<div class="empty"><div style="font-size:36px">🛡️</div><h3>${esc(t("noChannels"))}</h3><p>${esc(t("noChannelsDesc"))}</p></div>`}<div id="searchResults"></div>`;
+ $("searchForm").addEventListener("submit",e=>{e.preventDefault();const q=$("videoQuery").value.trim();$("searchResults").innerHTML=`<div class="panel"><h3>${esc(t("noVideos"))}</h3><p>${esc(t("noRealVideos"))}</p><p class="muted">${esc(t("searchHelp"))}</p></div>`});
+}
+function renderSaved(){renderCollection("saved",t("savedEmpty"))}
+function renderRecent(){renderCollection("recent",t("recentEmpty"))}
+function renderCollection(key,emptyText){
+ const arr=state[key];
+ $("dashboardContent").innerHTML=arr.length?`<div class="video-grid">${arr.map(v=>`<article class="video-card"><div class="video-thumb">▶</div><div class="video-body"><h3>${esc(v.title)}</h3><p>${esc(v.channel||"")}</p><button class="btn secondary small" onclick="openVideo('${esc(v.id)}')">${esc(t("play"))}</button></div></article>`).join("")}</div>`:`<div class="empty"><div style="font-size:36px">♡</div><p>${esc(emptyText)}</p></div>`;
+}
+function openVideo(id){
+ const v=[...state.saved,...state.recent].find(x=>x.id===id);if(!v)return;
+ $("playerTitle").textContent=v.title;
+ $("playerArea").innerHTML='<p class="note">'+esc(t("noRealVideos"))+'</p>';
+ $("playerCaption").textContent=t("searchHelp");$("playerDialog").showModal();
+}
+function closePlayer(){$("playerDialog").close();$("playerArea").innerHTML=""}
+loadState();
+if(localStorage.getItem("stutube_dark")==="1")document.body.classList.add("dark");
+applyLang();
+
+/* Explicit preview shortcuts: these are not real authentication. */
+const previewNotice=document.createElement("div");
+previewNotice.className="panel";
+previewNotice.innerHTML='<h2>Try the interface</h2><p class="muted">These buttons open a local preview only. They do not create or authenticate real accounts.</p><div class="inline-form"><button class="btn secondary" id="parentPreview">Parent dashboard preview</button><button class="btn secondary" id="studentPreview">Student dashboard preview</button></div>';
+$("landing").appendChild(previewNotice);
+$("parentPreview").onclick=()=>previewDashboard("parent");
+$("studentPreview").onclick=()=>previewDashboard("student");
+</script>
+</body>
+  </html>
